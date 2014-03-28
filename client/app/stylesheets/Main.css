@@ -1,24 +1,11 @@
-* {
+body {
     padding: 0;
     margin: 0;
     border: 0;
-}
-
-/* Layout */
-body {
 	position: absolute;
 	top: 0px;
 	left: 0px;
     width: 960px;
     height: 540px;
     background-color: #fff;
-}
-
-#square {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-    width: 100px;
-    height: 100px;
-    background-color: #f00;
 }
