@@ -5,8 +5,8 @@ var
 Main.onLoad = function () {
   // widgetAPI.sendReadyEvent();
 
-  // var socket = io.connect('http://188.226.203.5');
-  var socket = io.connect('127.0.0.1:3700');
+  var socket = io.connect('http://188.226.203.5');
+  // var socket = io.connect('127.0.0.1:3700');
 
   var videoEl = document.getElementById('video');
   var debugEl = document.getElementById('debug');
