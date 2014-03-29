@@ -46,6 +46,7 @@ Main.onLoad = function () {
 
   socket.on('setvideo', function(data) {
     videoEl.src = data.videoUrl;
+    qrContainerEl.classList.add('hidden');
   });
 
   setInterval(function() {

@@ -62,6 +62,10 @@ video {
   text-align: center;
 }
 
+#qr-container.hidden {
+  display: none;
+}
+
 #qr-container img {
   width: 15em;
   height: 15em;

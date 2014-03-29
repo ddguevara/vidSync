@@ -69,7 +69,7 @@ app.post("/create", withTv, function(req, res) {
     };
     channelsById[channelId] = channel;
   }
-  tv.socket.emit('channel', { channelId: channelId });
+  tv.socket.emit('setvideo', { videoUrl: channel.videoUrl });
   res.redirect("/chat?channel=" + channelId);
 });
 

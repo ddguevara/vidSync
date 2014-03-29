@@ -2,7 +2,7 @@ extends layout
 block head
   script(src='/socket.io/socket.io.js')
   script.
-    window.CHANNEL_ID = #{channelId};
+    window.CHANNEL_ID = "#{channelId}";
   script(src='/chat.js')
 block content
   .container
