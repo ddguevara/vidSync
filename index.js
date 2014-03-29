@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
     io.sockets.emit('message', data);
   });
   socket.on('message', function(data) {
-    console.log(message);
+    console.log(data);
   });
   socket.on('currentTime', function(data) {
     if (isMaster()) {
