@@ -31,9 +31,9 @@ io.sockets.on('connection', function (socket) {
   socket.on('chatmessage', function (data) {
     io.sockets.emit('chatmessage', data);
   });
-  socket.on('message', function(data) {
-    console.log(data);
-  });
+  // socket.on('message', function(data) {
+  //   console.log(data);
+  // });
   socket.on('currentTime', function(data) {
     if (isMaster()) {
       console.log('broadcasting time ' + data.currentTime);
