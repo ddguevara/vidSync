@@ -9,6 +9,9 @@ app.engine('jade', require('jade').__express);
 app.get("/", function(req, res){
   res.render("page");
 });
+app.get("/mobile", function(req, res){
+  res.render("head");
+});
 
 
 
