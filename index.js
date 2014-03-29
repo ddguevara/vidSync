@@ -53,7 +53,6 @@ app.get("/create", withTv, function(req, res) {
 });
 
 app.post("/create", withTv, function(req, res) {
-  console.log(req.body);
   var channelId = req.body.channelName;  // TODO: Use generated IDs?
   var tvId = req.query.tv;
   var tv = tvsById[tvId];
@@ -74,7 +73,11 @@ app.post("/create", withTv, function(req, res) {
 });
 
 app.get("/chat", withChannel, function(req, res) {
-  res.render("page");
+  res.render("chat");
+});
+
+app.get("/draw", withChannel, function(req, res) {
+  res.render("draw");
 });
 
 

@@ -1,32 +1,20 @@
 
 var localMode = true;
 
+var baseUrl = 'http://' + (localMode ? '127.0.0.1:3700' : 'tabby.tv');
 
 // Keep everything in anonymous function, called on window load.
 if(window.addEventListener) {
 window.addEventListener('load', function () {
-  var socket = io.connect(localMode ? 'http://localhost:3700' : 'http://tabby.tv/controller');
+  var socket = io.connect(baseUrl + '/tv');
   var canvas, context, tool;
 
   function init () {
     // Find the canvas element.
     canvas = document.getElementById('imageView');
-    if (!canvas) {
-      alert('Error: I cannot find the canvas element!');
-      return;
-    }
-
-    if (!canvas.getContext) {
-      alert('Error: no canvas.getContext!');
-      return;
-    }
 
     // Get the 2D canvas context.
     context = canvas.getContext('2d');
-    if (!context) {
-      alert('Error: failed to getContext!');
-      return;
-    }
 
     // Pencil tool instance.
     tool = new tool_pencil();
@@ -47,7 +35,7 @@ window.addEventListener('load', function () {
   function tool_pencil () {
     var tool = this;
     this.started = false;
-     context.strokeStyle = '#ff0000';
+    context.strokeStyle = '#ff0000';
 
     // This is called when you start holding down the mouse button.
     // This starts the pencil drawing.

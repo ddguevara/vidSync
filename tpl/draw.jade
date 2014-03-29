@@ -1,0 +1,14 @@
+extends layout
+
+block head
+  script(src='/socket.io/socket.io.js')
+  script(src="/draw.js")
+
+block content
+
+  p Hold down the mouse button to draw in the rectangle below.
+
+  #container
+    input#clear(type="button", value="Clear")
+    canvas#imageView(width="500", height="300", style="position:absolute;z-index:1")
+    video#video(style="position:absolute", src="http://tabby.tv/sintel.mp4", autoplay)
