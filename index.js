@@ -12,12 +12,12 @@ app.get("/", function(req, res){
 
 
 
-app.get("/tv", function(req, res){
-  res.render("tv");
-});
-
 //app.listen(port);
 var io = require('socket.io').listen(app.listen(port));
+
+var messages = [];
+
+messages.push({ message: 'welcome to the chat' });
 
 io.sockets.on('connection', function (socket) {
 
@@ -26,8 +26,12 @@ io.sockets.on('connection', function (socket) {
     return socket === io.sockets.clients()[0];
   }
 
-  socket.emit('chatmessage', { message: 'welcome to the chat' });
+  messages.forEach(function(message) {
+    socket.emit('chatmessage', message);
+  });
+
   socket.on('chatmessage', function (data) {
+    messages.push(data);
     io.sockets.emit('chatmessage', data);
   });
   socket.on('currentTime', function(data) {

@@ -1,15 +1,14 @@
 var
-  widgetAPI = new Common.API.Widget(),
+  widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
   Main = {};
 
 Main.onLoad = function () {
-  widgetAPI.sendReadyEvent();
+  if (widgetAPI) widgetAPI.sendReadyEvent();
 
   var socket = io.connect('http://188.226.203.5');
   // var socket = io.connect('127.0.0.1:3700');
 
   var videoEl = document.getElementById('video');
-  var debugEl = document.getElementById('debug');
 
   setInterval(function() {
     socket.emit('currentTime', { currentTime: videoEl.currentTime });
@@ -21,6 +20,22 @@ Main.onLoad = function () {
       videoEl.currentTime = data.currentTime;
     }
   });
+
+  var content = document.getElementById("content");
+
+  var displayMessage = function(data) {
+    var html = '';
+    html += '<b>' + (data.username || 'Server') + ': </b>';
+    html += data.message;
+    var chatLineEl = document.createElement('div');
+    chatLineEl.innerHTML = html;
+    content.appendChild(chatLineEl);
+    // TODO: Start trimming chat lines when there are too many.
+
+    content.scrollTop = content.scrollHeight;
+  }
+
+  socket.on('chatmessage', displayMessage);
 };
 
 Main.onUnload = function () {
