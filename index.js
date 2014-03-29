@@ -31,6 +31,9 @@ io.sockets.on('connection', function (socket) {
   socket.on('send', function (data) {
     io.sockets.emit('message', data);
   });
+  socket.on('message', function(data) {
+    console.log(message);
+  });
   socket.on('currentTime', function(data) {
     if (isMaster()) {
       console.log('broadcasting time ' + data.currentTime);
