@@ -23,7 +23,7 @@ Main.onLoad = function () {
   onResize();
   window.addEventListener('resize', onResize);
 
-  var socket = io.connect(localMode ? '127.0.0.1:3700' : 'http://tabby.tv');
+  var socket = io.connect(localMode ? '127.0.0.1:3700/tv' : 'http://tabby.tv/tv');
 
   var videoEl = document.getElementById('video');
   var qrContainerEl = document.getElementById('qr-container');
@@ -37,6 +37,8 @@ Main.onLoad = function () {
   var urlEl = document.createElement('div');
   urlEl.innerText = 'Scan the code, or visit this URL: ' + linkUrl;
   qrContainerEl.appendChild(urlEl);
+
+  socket.emit('id', { tvId: tvId });
 
   setInterval(function() {
     socket.emit('currentTime', { currentTime: videoEl.currentTime });
