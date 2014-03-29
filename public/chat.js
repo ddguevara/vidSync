@@ -3,7 +3,7 @@ var localMode = false;
 
 window.onload = function() {
 
-  var socket = io.connect(localMode ? 'http://localhost:3700' : 'http://188.226.203.5');
+  var socket = io.connect(localMode ? 'http://localhost:3700' : 'http://tabby.tv');
   var chatmessage = document.getElementById("chatmessage");
   var content = document.getElementById("content");
   var name = document.getElementById("name");
