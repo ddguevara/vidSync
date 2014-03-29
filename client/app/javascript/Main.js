@@ -1,5 +1,5 @@
 
-var localMode = false;
+var localMode = true;
 
 var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
@@ -29,7 +29,7 @@ Main.onLoad = function () {
   var qrContainerEl = document.getElementById('qr-container');
 
   var tvId = generateId();
-  var linkUrl = 'http://tabby.tv/link?tv=' + tvId;
+  var linkUrl = 'http://tabby.tv/' + tvId;
 
   var qrEl = document.createElement('img');
   qrEl.src = 'http://zxing.org/w/chart?cht=qr&chs=350x350&chl=' + encodeURI(linkUrl);
@@ -38,7 +38,9 @@ Main.onLoad = function () {
   urlEl.innerText = 'Scan the code, or visit this URL: ' + linkUrl;
   qrContainerEl.appendChild(urlEl);
 
-  socket.emit('id', { tvId: tvId });
+  socket.on('connect', function() {
+    socket.emit('id', { tvId: tvId });
+  });
 
   setInterval(function() {
     socket.emit('currentTime', { currentTime: videoEl.currentTime });

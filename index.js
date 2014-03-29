@@ -7,6 +7,9 @@ app.set('views', __dirname + '/tpl');
 app.set('view engine', "jade");
 app.engine('jade', require('jade').__express);
 app.get("/", function(req, res) {
+  res.render("home");
+});
+app.get("/chat", function(req, res) {
   res.render("page");
 });
 app.get("/mobile", function(req, res) {
@@ -16,8 +19,12 @@ app.get("/mobile", function(req, res) {
 
 var tvsById = {};
 
+var localParams = function(req, res, next) {
+  res.locals.params = req.params;
+  next();
+};
 
-app.get("/:tvId", function(req, res) {
+app.get("/:tvId", localParams, function(req, res) {
   var tvId = req.params.tvId;
   if (tvsById[tvId]) {
     res.render("link");

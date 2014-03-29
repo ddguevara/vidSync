@@ -3,8 +3,8 @@ extends layout
 block content
   .jumbotron
     .container
-      h1 Welcome to tabby.tv
+      h1 Connected to tabby.tv
       p
-        a.btn.btn-primary.btn-lg(role='button') Join a channel
+        a.btn.btn-primary.btn-lg(role='button', href="/#{params.tvId}/join") Join a channel
       p
-        a.btn.btn-primary.btn-lg(role='button') Create a channel
+        a.btn.btn-primary.btn-lg(role='button', href="/#{params.tvId}/create") Create a channel
