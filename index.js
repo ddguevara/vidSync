@@ -27,13 +27,14 @@ app.get("/:tvId", function(req, res) {
 });
 
 
+var server = app.listen(port);
+var io = require('socket.io').listen(server);
+console.log("Listening on port " + port);
 
-//app.listen(port);
-var io = require('socket.io').listen(app.listen(port));
 
 var messages = [];
 
-messages.push({ message: 'welcome to the chat' });
+messages.push({ message: 'Welcome to the channel!' });
 
 
 io.of('/tv').on('connection', function(socket) {
@@ -72,7 +73,7 @@ io.of('/tv').on('connection', function(socket) {
   socket.on('disconnect', disconnect);
 });
 
-io.of('controller').on('connection', function (socket) {
+io.of('/controller').on('connection', function(socket) {
 
   messages.forEach(function(message) {
     socket.emit('chatmessage', message);
@@ -80,8 +81,6 @@ io.of('controller').on('connection', function (socket) {
 
   socket.on('chatmessage', function (data) {
     messages.push(data);
-    io.sockets.emit('chatmessage', data);
+    io.of('/controller').emit('chatmessage', data);
   });
 });
-
-console.log("Listening on port " + port);
