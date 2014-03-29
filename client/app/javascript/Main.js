@@ -1,3 +1,6 @@
+
+var localMode = true;
+
 var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
   Main = {};
@@ -5,8 +8,7 @@ var
 Main.onLoad = function () {
   if (widgetAPI) widgetAPI.sendReadyEvent();
 
-  var socket = io.connect('http://188.226.203.5');
-  // var socket = io.connect('127.0.0.1:3700');
+  var socket = io.connect(localMode ? '127.0.0.1:3700' : 'http://188.226.203.5');
 
   var videoEl = document.getElementById('video');
 
@@ -25,12 +27,24 @@ Main.onLoad = function () {
 
   var displayMessage = function(data) {
     var html = '';
+    if (data.avatar) html += '<img src="' + data.avatar + '">'
     html += '<b>' + (data.username || 'Server') + ': </b>';
     html += data.message;
     var chatLineEl = document.createElement('div');
+    chatLineEl.classList.add('chatline', 'fadeout');
     chatLineEl.innerHTML = html;
     content.appendChild(chatLineEl);
-    // TODO: Start trimming chat lines when there are too many.
+
+    setTimeout(function() {
+      chatLineEl.classList.remove('fadeout');
+    }, 0);
+
+    setTimeout(function() {
+      chatLineEl.classList.add('fadeout');
+      setTimeout(function() {
+        chatLineEl.parentElement.removeChild(chatLineEl);
+      }, 2000);
+    }, 5000);
 
     content.scrollTop = content.scrollHeight;
   }

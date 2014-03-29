@@ -1,10 +1,13 @@
+
+var localMode = true;
+
 window.onload = function() {
 
-  // var socket = io.connect('http://localhost:3700');
-  var socket = io.connect('http://188.226.203.5');
+  var socket = io.connect(localMode ? 'http://localhost:3700' : 'http://188.226.203.5');
   var chatmessage = document.getElementById("chatmessage");
   var content = document.getElementById("content");
   var name = document.getElementById("name");
+  var avatarEl = document.getElementById("avatar");
   var form = document.getElementsByClassName("controls")[0];
 
   var displayMessage = function(data) {
@@ -28,7 +31,7 @@ window.onload = function() {
       displayMessage({message: "Please type your name!", username: "Error"});
     } else {
       var text = chatmessage.value;
-      socket.emit('chatmessage', { message: text, username: name.value });
+      socket.emit('chatmessage', { message: text, username: name.value, avatar: avatarEl.value });
       chatmessage.value = "";
     }
     return false;
