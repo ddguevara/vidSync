@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function() {
     content.scrollTop = content.scrollHeight;
   }
 
+  socket.emit('setchannel', { channelId: CHANNEL_ID });
+
   socket.on('chatmessage', displayMessage);
 
   form.addEventListener('submit', function(event) {

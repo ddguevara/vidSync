@@ -1,6 +1,8 @@
 
 var localMode = true;
 
+var baseUrl = 'http://' + (localMode ? '127.0.0.1:3700' : 'tabby.tv');
+
 var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
   Main = {};
@@ -23,13 +25,13 @@ Main.onLoad = function () {
   onResize();
   window.addEventListener('resize', onResize);
 
-  var socket = io.connect(localMode ? '127.0.0.1:3700/tv' : 'http://tabby.tv/tv');
+  var socket = io.connect(baseUrl + '/tv');
 
   var videoEl = document.getElementById('video');
   var qrContainerEl = document.getElementById('qr-container');
 
   var tvId = generateId();
-  var linkUrl = 'http://tabby.tv/' + tvId;
+  var linkUrl = baseUrl + '/link?tv=' + tvId;
 
   var qrEl = document.createElement('img');
   qrEl.src = 'http://zxing.org/w/chart?cht=qr&chs=350x350&chl=' + encodeURI(linkUrl);
@@ -40,6 +42,10 @@ Main.onLoad = function () {
 
   socket.on('connect', function() {
     socket.emit('id', { tvId: tvId });
+  });
+
+  socket.on('setvideo', function(data) {
+    videoEl.src = data.videoUrl;
   });
 
   setInterval(function() {

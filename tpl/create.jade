@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  .jumbotron
+    .container
+      h1 Create a channel
+      form(method="post")
+        .form-group
+          label(for="channelName") Channel name
+          input.form-control#channelName(type="text", name="channelName")
+        .form-group
+          label(for="videoUrl") Video URL
+          input.form-control#videoUrl(type="url", name="videoUrl")
+        button.btn.btn-default(type="submit") Create channel

@@ -3,14 +3,12 @@ var app = express();
 var port = 3700;
 
 app.use(express.static(__dirname + '/public'));
+app.use(express.urlencoded());
 app.set('views', __dirname + '/tpl');
 app.set('view engine', "jade");
 app.engine('jade', require('jade').__express);
 app.get("/", function(req, res) {
   res.render("home");
-});
-app.get("/chat", function(req, res) {
-  res.render("page");
 });
 app.get("/mobile", function(req, res) {
   res.render("head");
@@ -18,19 +16,65 @@ app.get("/mobile", function(req, res) {
 
 
 var tvsById = {};
+var channelsById = {};
 
-var localParams = function(req, res, next) {
-  res.locals.params = req.params;
-  next();
-};
 
-app.get("/:tvId", localParams, function(req, res) {
-  var tvId = req.params.tvId;
+
+var withTv = function(req, res, next) {
+  var tvId = req.query.tv;
   if (tvsById[tvId]) {
-    res.render("link");
+    res.locals.tvId = tvId;
+    next();
   } else {
     res.render("404");
   }
+};
+
+var withChannel = function(req, res, next) {
+  var channelId = req.query.channel;
+  if (channelsById[channelId]) {
+    res.locals.channelId = channelId;
+    next();
+  } else {
+    res.render("404");
+  }
+};
+
+app.get("/link", withTv, function(req, res) {
+  res.render("link");
+});
+
+app.get("/join", withTv, function(req, res) {
+  res.render("join");
+});
+
+app.get("/create", withTv, function(req, res) {
+  res.render("create");
+});
+
+app.post("/create", withTv, function(req, res) {
+  console.log(req.body);
+  var channelId = req.body.channelName;  // TODO: Use generated IDs?
+  var tvId = req.query.tv;
+  var tv = tvsById[tvId];
+  tv.channelId = channelId;
+  if (!channelsById[channelId]) {
+    tv.isMaster = true;
+
+    var channel = {
+      id: channelId,
+      videoUrl: req.body.videoUrl,
+      tvIds: [ tvId ],
+      messages: [ { message: 'Welcome to channel ' + channelId + '!' } ]
+    };
+    channelsById[channelId] = channel;
+  }
+  tv.socket.emit('channel', { channelId: channelId });
+  res.redirect("/chat?channel=" + channelId);
+});
+
+app.get("/chat", withChannel, function(req, res) {
+  res.render("page");
 });
 
 
@@ -39,39 +83,34 @@ var io = require('socket.io').listen(server);
 console.log("Listening on port " + port);
 
 
-var messages = [];
-
-messages.push({ message: 'Welcome to the channel!' });
-
-
 io.of('/tv').on('connection', function(socket) {
 
   console.log('TV connected');
 
-  var tvId = null;
-
-  var isMaster = function() {
-    // TODO: Make the channel creator's TV always be the master.
-    return socket === io.of('/tv').clients()[0];
-  }
+  var tv = {
+    id: null,
+    channelId: null,
+    isMaster: false,
+    socket: socket
+  };
 
   var disconnect = function() {
-    if (tvId) {
-      console.log('TV ' + tvId + ' disconnected');
-      delete tvsById[tvId];
-      tvId = null;
+    if (tv.id) {
+      console.log('TV ' + tv.id + ' disconnected');
+      delete tvsById[tv.id];
+      tv.id = null;
     }
   };
 
   socket.on('id', function(data) {
     disconnect();
-    tvId = data.tvId;
-    tvsById[tvId] = socket;
-    console.log('TV ' + tvId + ' has identified itself');
+    tv.id = data.tvId;
+    tvsById[tv.id] = tv;
+    console.log('TV ' + tv.id + ' has identified itself');
   });
 
   socket.on('currentTime', function(data) {
-    if (isMaster()) {
+    if (tv.isMaster) {
       console.log('broadcasting time ' + data.currentTime);
       socket.broadcast.emit('seekTo', data);
     }
@@ -82,12 +121,27 @@ io.of('/tv').on('connection', function(socket) {
 
 io.of('/controller').on('connection', function(socket) {
 
-  messages.forEach(function(message) {
-    socket.emit('chatmessage', message);
+  var channel = null;
+
+  var disconnect = function() {
+    channel = null;
+  };
+
+  socket.on('setchannel', function(data) {
+    disconnect();
+    channel = channelsById[data.channelId];
+
+    if (! channel) return;  // TODO: Send an error.
+
+    channel.messages.forEach(function(message) {
+      socket.emit('chatmessage', message);
+    });
   });
 
   socket.on('chatmessage', function (data) {
-    messages.push(data);
+    if (! channel) return;
+    channel.messages.push(data);
+    // TODO: Limit number of messages stored.
     io.of('/controller').emit('chatmessage', data);
   });
 });
