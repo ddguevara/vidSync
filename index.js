@@ -22,6 +22,8 @@ var io = require('socket.io').listen(app.listen(port));
 io.sockets.on('connection', function (socket) {
 
   var isMaster = function() {
+    var clients = io.sockets.clients();
+    console.log(clients);
     return socket === io.sockets.clients()[0];
   }
 
