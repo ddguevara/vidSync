@@ -1,5 +1,5 @@
 
-var localMode = true;
+var localMode = false;
 
 window.onload = function() {
 

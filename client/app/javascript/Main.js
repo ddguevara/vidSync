@@ -1,5 +1,5 @@
 
-var localMode = true;
+var localMode = false;
 
 var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
