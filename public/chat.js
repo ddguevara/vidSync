@@ -1,6 +1,7 @@
 window.onload = function() {
 
-  var socket = io.connect('http://localhost:3700');
+  // var socket = io.connect('http://localhost:3700');
+  var socket = io.connect('http://188.226.203.5');
   var chatmessage = document.getElementById("chatmessage");
   var content = document.getElementById("content");
   var name = document.getElementById("name");
