@@ -28,7 +28,7 @@ io.sockets.on('connection', function (socket) {
 
   socket.emit('chatmessage', { message: 'welcome to the chat' });
   socket.on('chatmessage', function (data) {
-    socket.broadcast.emit('chatmessage', data);
+    io.sockets.emit('chatmessage', data);
   });
   socket.on('currentTime', function(data) {
     if (isMaster()) {

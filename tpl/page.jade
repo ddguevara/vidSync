@@ -6,9 +6,9 @@ html
     script(src='/chat.js')
   body
     #content(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;')
-    .controls
+    form.controls
       | Name:
       input#name(style='width:350px;')
       br
-      input#field(style='width:350px;')
-      input#send(type='button', value='send')
+      input#chatmessage(style='width:350px;')
+      input#send(type='submit', value='send')

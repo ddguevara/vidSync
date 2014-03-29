@@ -1,9 +1,9 @@
 var
-  // widgetAPI = new Common.API.Widget(),
+  widgetAPI = new Common.API.Widget(),
   Main = {};
 
 Main.onLoad = function () {
-  // widgetAPI.sendReadyEvent();
+  widgetAPI.sendReadyEvent();
 
   var socket = io.connect('http://188.226.203.5');
   // var socket = io.connect('127.0.0.1:3700');

@@ -1,36 +1,35 @@
 window.onload = function() {
- 
-    var messages = [];
-    var socket = io.connect('http://localhost:3700');
-    var field = document.getElementById("field");
-    var sendButton = document.getElementById("send");
-    var content = document.getElementById("content");
-    var name = document.getElementById("name");
- 
-    socket.on('chatmessage', function (data) {
-        if(data.message) {
-            messages.push(data);
-            var html = '';
-            for(var i=0; i<messages.length; i++) {
-                html += '<b>' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
-                html += messages[i].message + '<br />';
-            }
-            content.innerHTML = html;
-            
-            content.scrollTop = content.scrollHeight;
-        } else {
-            console.log("There is a problem:", data);
-        }
-    });
- 
-    sendButton.onclick = function() {
-        if(name.value == "") {
-            alert("Please type your name!");
-        } else {
-            var text = field.value;
-            socket.emit('chatmessage', { message: text, username: name.value });
-            field.value = "";
-        }
-    };
- 
+
+  var socket = io.connect('http://localhost:3700');
+  var chatmessage = document.getElementById("chatmessage");
+  var content = document.getElementById("content");
+  var name = document.getElementById("name");
+  var form = document.getElementsByClassName("controls")[0];
+
+  var displayMessage = function(data) {
+    var html = '';
+    html += '<b>' + (data.username || 'Server') + ': </b>';
+    html += data.message;
+    var chatLineEl = document.createElement('div');
+    chatLineEl.innerHTML = html;
+    content.appendChild(chatLineEl);
+    // TODO: Add Like button.
+    // TODO: Start trimming chat lines when there are too many.
+
+    content.scrollTop = content.scrollHeight;
+  }
+
+  socket.on('chatmessage', displayMessage);
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    if (name.value == "") {
+      displayMessage({message: "Please type your name!", username: "Error"});
+    } else {
+      var text = chatmessage.value;
+      socket.emit('chatmessage', { message: text, username: name.value });
+      chatmessage.value = "";
+    }
+    return false;
+  });
 }
