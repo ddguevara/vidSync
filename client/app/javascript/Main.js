@@ -5,12 +5,38 @@ var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
   Main = {};
 
+var generateId = function() {
+  var id = "";
+  for (var i = 0; i < 6; ++i) {
+    id += String.fromCharCode(97 + Math.floor(Math.random() * 26));
+  }
+  return id;
+};
+
 Main.onLoad = function () {
   if (widgetAPI) widgetAPI.sendReadyEvent();
 
-  var socket = io.connect(localMode ? '127.0.0.1:3700' : 'http://188.226.203.5');
+  var onResize = function() {
+    var fontSize = window.innerHeight / 40;
+    document.body.style.fontSize = fontSize + 'px';
+  };
+  onResize();
+  window.addEventListener('resize', onResize);
+
+  var socket = io.connect(localMode ? '127.0.0.1:3700' : 'http://tabby.tv');
 
   var videoEl = document.getElementById('video');
+  var qrContainerEl = document.getElementById('qr-container');
+
+  var tvId = generateId();
+  var linkUrl = 'http://tabby.tv/link?tv=' + tvId;
+
+  var qrEl = document.createElement('img');
+  qrEl.src = 'http://zxing.org/w/chart?cht=qr&chs=350x350&chl=' + encodeURI(linkUrl);
+  qrContainerEl.appendChild(qrEl);
+  var urlEl = document.createElement('div');
+  urlEl.innerText = 'Scan the code, or visit this URL: ' + linkUrl;
+  qrContainerEl.appendChild(urlEl);
 
   setInterval(function() {
     socket.emit('currentTime', { currentTime: videoEl.currentTime });

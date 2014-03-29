@@ -3,19 +3,22 @@
 }
 
 body {
+  font-family: "Comic Sans MS", sans-serif;
   padding: 0;
   margin: 0;
   border: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff;
+  background-color: #000;
   overflow: hidden;
 }
 
 video {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 0;
 }
 
 #content {
@@ -27,6 +30,8 @@ video {
   font-size: 2em;
   color: white;
   text-shadow: 0px 0px 10px black;
+
+  z-index: 1;
 }
 
 .chatline {
@@ -46,4 +51,27 @@ video {
   margin-right: 0.5em;
   object-fit: cover;
   border-radius: 5em;
+}
+
+#qr-container {
+  background: white;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  text-align: center;
+}
+
+#qr-container img {
+  width: 15em;
+  height: 15em;
+}
+
+img.tabby-logo {
+  margin-top: 1em;
+  margin-right: 3.5em;
+}
+
+h1 {
+  margin: 0px;
 }

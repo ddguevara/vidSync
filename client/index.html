@@ -4,9 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>vidSync</title>
 
-    <script src="$MANAGER_WIDGET/Common/API/Widget.js"></script>
-    <script src="http://188.226.203.5/socket.io/socket.io.js"></script>
-    <!-- // <script src="http://127.0.0.1:3700/socket.io/socket.io.js"></script> -->
+    <!-- // <script src="$MANAGER_WIDGET/Common/API/Widget.js"></script> -->
+    <!-- // <script src="http://tabby.tv/socket.io/socket.io.js"></script> -->
+    <script src="http://127.0.0.1:3700/socket.io/socket.io.js"></script>
     <script src="app/javascript/Main.js"></script>
 
     <link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
@@ -14,8 +14,13 @@
   </head>
 
   <body onload="Main.onLoad();" onunload="Main.onUnload();">
-    <video id="video" src="http://188.226.203.5/sintel.mp4" autoplay controls></video>
+    <!-- <video id="video" src="http://tabby.tv/sintel.mp4" autoplay controls></video> -->
+    <video id="video" controls></video>
     <!-- <img src="https://www.google.com/images/srpr/logo11w.png"></img> -->
     <div id="content"></div>
+    <div id="qr-container">
+      <img class="tabby-logo" src="http://tabby.tv/tabby-logo.png">
+      <h1>tabby.tv</h1>
+    </div>
   </body>
 </html>
