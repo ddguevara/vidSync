@@ -27,9 +27,9 @@ io.sockets.on('connection', function (socket) {
     return socket === io.sockets.clients()[0];
   }
 
-  socket.emit('message', { message: 'welcome to the chat' });
-  socket.on('send', function (data) {
-    io.sockets.emit('message', data);
+  socket.emit('chatmessage', { message: 'welcome to the chat' });
+  socket.on('chatmessage', function (data) {
+    io.sockets.emit('chatmessage', data);
   });
   socket.on('message', function(data) {
     console.log(data);

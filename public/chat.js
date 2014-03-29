@@ -7,7 +7,7 @@ window.onload = function() {
     var content = document.getElementById("content");
     var name = document.getElementById("name");
  
-    socket.on('message', function (data) {
+    socket.on('chatmessage', function (data) {
         if(data.message) {
             messages.push(data);
             var html = '';
@@ -28,7 +28,7 @@ window.onload = function() {
             alert("Please type your name!");
         } else {
             var text = field.value;
-            socket.emit('send', { message: text, username: name.value });
+            socket.emit('chatmessage', { message: text, username: name.value });
             field.value = "";
         }
     };
