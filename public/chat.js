@@ -1,5 +1,5 @@
 
-var localMode = true;
+var localMode = false;
 
 document.addEventListener("DOMContentLoaded", function() {
 

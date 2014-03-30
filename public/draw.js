@@ -1,5 +1,5 @@
 
-var localMode = true;
+var localMode = false;
 
 var baseUrl = 'http://' + (localMode ? '127.0.0.1:3700' : 'tabby.tv');
 
@@ -9,7 +9,7 @@ window.addEventListener('load', function () {
 
   var match = /\?.*channel=([^\&]*)/.exec(window.location.search);
   if (match) {
-    socket.emit('channel', { channelId: match[1] });
+    socket.emit('setchannel', { channelId: match[1] });
   }
 
   var canvas = Shared.setupCanvas(socket);

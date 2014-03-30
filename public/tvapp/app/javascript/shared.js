@@ -7,9 +7,6 @@ Shared.setupVideo = function(socket, onSetVideo) {
 
   socket.on('setchannel', function(data) {
     socket.emit('setchannel', data);
-  });
-
-  socket.on('setvideo', function(data) {
     videoEl.src = data.videoUrl;
     onSetVideo && onSetVideo();
   });

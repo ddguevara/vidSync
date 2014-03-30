@@ -1,5 +1,5 @@
 
-var localMode = true;
+var localMode = false;
 
 var baseUrl = 'http://' + (localMode ? '127.0.0.1:3700' : 'tabby.tv');
 
