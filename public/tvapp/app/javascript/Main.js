@@ -36,10 +36,6 @@ Main.onLoad = function () {
     qrContainerEl.appendChild(urlEl);
   });
 
-  // socket.on('connect', function() {
-  //   socket.emit('id', { tvId: tvId });
-  // });
-
   var onSetVideo = function() {
     qrContainerEl.classList.add('hidden');
   };
