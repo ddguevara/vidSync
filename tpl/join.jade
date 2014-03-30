@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  .container
+    p Choose a channel to join:
+
+    each id in channels
+      p: a.btn.btn-default(role="button", href="/join?tv=#{tvId}&channel=#{id}") #{id}

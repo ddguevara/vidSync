@@ -1,3 +1,4 @@
+
 var express = require("express");
 var app = express();
 var port = 3700;
@@ -45,6 +46,23 @@ app.get("/link", withTv, function(req, res) {
 });
 
 app.get("/join", withTv, function(req, res) {
+  var channelId = req.query.channel;
+  if (channelId) {
+    channelId = req.query.channel;
+    var channel = channelsById[channelId];
+    if (! channel) return res.send(404, "Oops, that channel is gone!");
+    var tvId = req.query.tv;
+    var tv = tvsById[tvId];
+    channel.tvIds.push(tvId);
+    tv.socket.emit('setchannel', { channelId: channelId });
+    tv.socket.emit('setvideo', { videoUrl: channel.videoUrl });
+    res.redirect("/chat?channel=" + channelId);
+  }
+  var channels = [];
+  for (channelId in channelsById) {
+    channels.push(channelId);
+  }
+  res.locals.channels = channels;
   res.render("join");
 });
 
@@ -57,17 +75,19 @@ app.post("/create", withTv, function(req, res) {
   var tvId = req.query.tv;
   var tv = tvsById[tvId];
   tv.channelId = channelId;
-  if (!channelsById[channelId]) {
+  var channel = channelsById[channelId];
+  if (! channel) {
     tv.isMaster = true;
 
     var channel = {
       id: channelId,
       videoUrl: req.body.videoUrl,
-      tvIds: [ tvId ],
+      tvIds: [],
       messages: [ { message: 'Welcome to channel ' + channelId + '!' } ]
     };
     channelsById[channelId] = channel;
   }
+  channel.tvIds.push(tvId);
   tv.socket.emit('setvideo', { videoUrl: channel.videoUrl });
   res.redirect("/chat?channel=" + channelId);
 });
@@ -86,40 +106,79 @@ var io = require('socket.io').listen(server);
 console.log("Listening on port " + port);
 
 
+var generateId = function() {
+  var id = "";
+  for (var i = 0; i < 6; ++i) {
+    id += String.fromCharCode(97 + Math.floor(Math.random() * 26));
+  }
+  return id;
+};
+
+
 io.of('/tv').on('connection', function(socket) {
 
-  console.log('TV connected');
-
   var tv = {
-    id: null,
+    id: generateId(),
     channelId: null,
     isMaster: false,
     socket: socket
   };
+  tvsById[tv.id] = tv;
+
+  console.log('TV ' + tv.id + ' connected');
 
   var disconnect = function() {
-    if (tv.id) {
-      console.log('TV ' + tv.id + ' disconnected');
-      delete tvsById[tv.id];
-      tv.id = null;
-    }
+    console.log('TV ' + tv.id + ' disconnected');
+    delete tvsById[tv.id];
+    tv.id = null;
   };
 
-  socket.on('id', function(data) {
-    disconnect();
-    tv.id = data.tvId;
-    tvsById[tv.id] = tv;
-    console.log('TV ' + tv.id + ' has identified itself');
-  });
+  socket.emit('id', { tvId: tv.id });
 
   socket.on('currentTime', function(data) {
-    if (tv.isMaster) {
+    if (tv.isMaster && tv.channelId) {
       console.log('broadcasting time ' + data.currentTime);
-      socket.broadcast.emit('seekTo', data);
+      var channel = channelsById[tv.channelId];
+      for (var i = 0; i < channel.tvIds.length; ++i) {
+        var tvId = channel.tvIds[i];
+        if (tv.id === tvId) continue;
+        var otherTv = tvsById[tvId];
+        if (otherTv) otherTv.socket.emit('seekTo', data);
+      }
     }
+  });
+
+  socket.on('channel', function(data) {
+    var channelId = data.channelId;
+    var channel = channelsById[channelId];
+    if (channel) {
+      tv.channelId = channelId;
+      channel.tvIds.push(tv.id);
+    }
+  });
+
+  socket.on('paintCommand', function(data) {
+    io.of('/tv').emit('paintCommand', data);
   });
 
   socket.on('disconnect', disconnect);
+
+  socket.on('play', function() {
+    io.of('/tv').emit('play');
+  });
+
+  socket.on('pause', function() {
+    io.of('/tv').emit('pause');
+  });
+
+  socket.on('setchannel', function(data) {
+    var channel = channelsById[data.channelId];
+
+    channel.messages.forEach(function(message) {
+      socket.emit('chatmessage', message);
+    });
+  });
+
 });
 
 io.of('/controller').on('connection', function(socket) {
@@ -143,8 +202,29 @@ io.of('/controller').on('connection', function(socket) {
 
   socket.on('chatmessage', function (data) {
     if (! channel) return;
-    channel.messages.push(data);
     // TODO: Limit number of messages stored.
-    io.of('/controller').emit('chatmessage', data);
+    channel.messages.push(data);
+
+    for (var i = 0; i < channel.tvIds.length; ++i) {
+      var tvId = channel.tvIds[i];
+      var tv = tvsById[tvId];
+      tv.socket.emit('chatmessage', data);
+    }
+  });
+
+  socket.on('play', function() {
+    for (var i = 0; i < channel.tvIds.length; ++i) {
+      var tvId = channel.tvIds[i];
+      var tv = tvsById[tvId];
+      tv.socket.emit('play');
+    }
+  });
+
+  socket.on('pause', function() {
+    for (var i = 0; i < channel.tvIds.length; ++i) {
+      var tvId = channel.tvIds[i];
+      var tv = tvsById[tvId];
+      tv.socket.emit('pause');
+    }
   });
 });

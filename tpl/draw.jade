@@ -2,13 +2,22 @@ extends layout
 
 block head
   script(src='/socket.io/socket.io.js')
+  script(src="/tvapp/app/javascript/shared.js")
   script(src="/draw.js")
+  script(src="/playercontrols.js")
 
 block content
 
-  p Hold down the mouse button to draw in the rectangle below.
+  .container
+    p Hold down the mouse button to draw in the rectangle below.
 
-  #container
+    #container
+      div(style="width: 500px; height: 300px; position: relative")
+        video#video(style="position:absolute; width:100%; height:100%", src="http://tabby.tv/sintel.mp4", autoplay)
+        canvas#imageView(width="500", height="300", style="position:absolute; width:100%; height:100%; z-index:1")
+
     input#clear(type="button", value="Clear")
-    canvas#imageView(width="500", height="300", style="position:absolute;z-index:1")
-    video#video(style="position:absolute", src="http://tabby.tv/sintel.mp4", autoplay)
+
+    p
+      button.btn#play Play
+      button.btn#pause Pause

@@ -7,6 +7,7 @@
     <script src="$MANAGER_WIDGET/Common/API/Widget.js"></script>
     <!-- // <script src="http://tabby.tv/socket.io/socket.io.js"></script> -->
     <script src="http://127.0.0.1:3700/socket.io/socket.io.js"></script>
+    <script src="app/javascript/shared.js"></script>
     <script src="app/javascript/Main.js"></script>
 
     <link rel="stylesheet" href="app/stylesheets/Main.css" type="text/css">
@@ -15,7 +16,8 @@
 
   <body onload="Main.onLoad();" onunload="Main.onUnload();">
     <!-- <video id="video" src="http://tabby.tv/sintel.mp4" autoplay controls></video> -->
-    <video id="video" controls></video>
+    <video id="video" autoplay controls></video>
+    <canvas id="imageView" width="500" height="300"></canvas>
     <!-- <img src="https://www.google.com/images/srpr/logo11w.png"></img> -->
     <div id="content"></div>
     <div id="qr-container">

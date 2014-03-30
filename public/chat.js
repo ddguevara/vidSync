@@ -3,7 +3,8 @@ var localMode = true;
 
 document.addEventListener("DOMContentLoaded", function() {
 
-  var socket = io.connect(localMode ? 'http://localhost:3700/controller' : 'http://tabby.tv/controller');
+  var socket = io.connect(localMode ? 'http://localhost:3700/' : 'http://tabby.tv/');
+  socket.emit('imachat');
 
   var chatmessage = document.getElementById("chatmessage");
   var content = document.getElementById("content");
@@ -39,4 +40,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return false;
   });
+
+  PlayerControls.init(socket);
 });

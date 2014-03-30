@@ -4,9 +4,14 @@ block head
   script.
     window.CHANNEL_ID = "#{channelId}";
   script(src='/chat.js')
+  script(src="/playercontrols.js")
 block content
   .container
     p Channel: [#{channelId}]
+    p: a(href="/draw?channel=#{channelId}") Draw!
+    p
+      button.btn#play Play
+      button.btn#pause Pause
     #content(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;')
     form.controls
       | Name:

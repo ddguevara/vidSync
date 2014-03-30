@@ -7,13 +7,6 @@ var
   widgetAPI = (typeof Common !== 'undefined') && new Common.API.Widget() || null,
   Main = {};
 
-var generateId = function() {
-  var id = "";
-  for (var i = 0; i < 6; ++i) {
-    id += String.fromCharCode(97 + Math.floor(Math.random() * 26));
-  }
-  return id;
-};
 
 Main.onLoad = function () {
   if (widgetAPI) widgetAPI.sendReadyEvent();
@@ -25,40 +18,31 @@ Main.onLoad = function () {
   onResize();
   window.addEventListener('resize', onResize);
 
-  var socket = io.connect(baseUrl + '/tv');
+  var socket = io.connect(baseUrl + '/');
+  socket.emit('imatv');
 
-  var videoEl = document.getElementById('video');
   var qrContainerEl = document.getElementById('qr-container');
 
-  var tvId = generateId();
-  var linkUrl = baseUrl + '/link?tv=' + tvId;
+  socket.on('id', function(data) {
+    var tvId = data.tvId;
 
-  var qrEl = document.createElement('img');
-  qrEl.src = 'http://zxing.org/w/chart?cht=qr&chs=350x350&chl=' + encodeURI(linkUrl);
-  qrContainerEl.appendChild(qrEl);
-  var urlEl = document.createElement('div');
-  urlEl.innerText = 'Scan the code, or visit this URL: ' + linkUrl;
-  qrContainerEl.appendChild(urlEl);
+    var linkUrl = baseUrl + '/link?tv=' + tvId;
 
-  socket.on('connect', function() {
-    socket.emit('id', { tvId: tvId });
+    var qrEl = document.createElement('img');
+    qrEl.src = 'http://zxing.org/w/chart?cht=qr&chs=350x350&chl=' + encodeURI(linkUrl);
+    qrContainerEl.appendChild(qrEl);
+    var urlEl = document.createElement('div');
+    urlEl.innerText = 'Scan the code, or visit this URL: ' + linkUrl;
+    qrContainerEl.appendChild(urlEl);
   });
 
-  socket.on('setvideo', function(data) {
-    videoEl.src = data.videoUrl;
+  // socket.on('connect', function() {
+  //   socket.emit('id', { tvId: tvId });
+  // });
+
+  var onSetVideo = function() {
     qrContainerEl.classList.add('hidden');
-  });
-
-  setInterval(function() {
-    socket.emit('currentTime', { currentTime: videoEl.currentTime });
-  }, 1234);
-
-  socket.on('seekTo', function(data) {
-    var currentTime = videoEl.currentTime;
-    if (Math.abs(currentTime - data.currentTime) > 0.5) {
-      videoEl.currentTime = data.currentTime;
-    }
-  });
+  };
 
   var content = document.getElementById("content");
 
@@ -87,6 +71,9 @@ Main.onLoad = function () {
   }
 
   socket.on('chatmessage', displayMessage);
+
+  Shared.setupVideo(socket, onSetVideo);
+  Shared.setupCanvas(socket);
 };
 
 Main.onUnload = function () {
