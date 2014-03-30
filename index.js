@@ -3,22 +3,23 @@ var express = require("express");
 var app = express();
 var port = 3700;
 
+var tvsById = {};
+var channelsById = {};
+
+
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded());
 app.set('views', __dirname + '/tpl');
 app.set('view engine', "jade");
 app.engine('jade', require('jade').__express);
 app.get("/", function(req, res) {
+  var channels = [];
+  for (channelId in channelsById) {
+    channels.push(channelId);
+  }
+  res.locals.channels = channels;
   res.render("home");
 });
-app.get("/mobile", function(req, res) {
-  res.render("head");
-});
-
-
-var tvsById = {};
-var channelsById = {};
-
 
 
 var withTv = function(req, res, next) {

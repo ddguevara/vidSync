@@ -5,3 +5,6 @@ block content
     center
       img(src="/tabby-logo.png", style="max-width: 200px")
       h1 tabby.tv
+    hr
+    each id in channels
+      p: a.btn.btn-default(role="button", href="/join?tv=#{tvId}&channel=#{id}") #{id}
