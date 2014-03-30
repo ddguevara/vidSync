@@ -61,7 +61,7 @@ Main.onLoad = function () {
       setTimeout(function() {
         chatLineEl.parentElement.removeChild(chatLineEl);
       }, 2000);
-    }, 5000);
+    }, 7000);
 
     content.scrollTop = content.scrollHeight;
   }

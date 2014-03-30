@@ -12,6 +12,7 @@ window.addEventListener('load', function () {
     socket.emit('setchannel', { channelId: match[1] });
   }
 
+  Shared.setupVideo(socket);
   var canvas = Shared.setupCanvas(socket);
 
   // This painting tool works like a drawing pencil which tracks the mouse 
